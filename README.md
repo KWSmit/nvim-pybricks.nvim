@@ -9,6 +9,7 @@ your PC and upload to and run it on your Pybricks hub.
 On your PC:
 
 - Neovim 7.0 or newer.
+- *This plugin is tested on Linux (Pop!_OS 22.04 LTS) and Windows 10.*
 
 On your LEGO® Powered Up hub:
 
@@ -93,7 +94,7 @@ hubname. This hubname will become the new global hubname and thus will be
 used the next time this keybinding is used. If you want to use a different
 hubname, use command `PybricksSetHubName` to change the global hubname.
 
-##Tips##
+## Tips
 
 - Install Pybricks in the virtual environment of your project. If you have
 setup a Python language server in Neovim then you get syntax highlighting and
