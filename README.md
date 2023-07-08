@@ -9,6 +9,7 @@ your PC and upload to and run it on your Pybricks hub.
 On your PC:
 
 - Neovim 7.0 or newer.
+- [pybricksdev](https://github.com/pybricks/pybricksdev).
 - *This plugin is tested on Linux (Pop!_OS 22.04 LTS) and Windows 10.*
 
 On your LEGO® Powered Up hub:
