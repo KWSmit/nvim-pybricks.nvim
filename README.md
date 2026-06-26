@@ -2,7 +2,7 @@
 
 Neovim lua-plugin for programming LEGO® Powered Up hubs with the Pybricks
 firmware running on it. With this plugin you can write your code locally on
-your PC and upload to and run it on your Pybricks hub.
+your PC and upload to and run it on your LEGO hub.
 
 ## Requirements
 
@@ -10,90 +10,94 @@ On your PC:
 
 - Neovim 7.0 or newer.
 - [pybricksdev](https://github.com/pybricks/pybricksdev).
-- *This plugin is tested on Linux (Pop!_OS 22.04 LTS) and Windows 10.*
 
 On your LEGO® Powered Up hub:
 
-- Pybricks version 3.2 or newer.
+- Pybricks Beta v3.0.0-beta.9 version 3.2 or newer.
 
 ## Pybricks
 
 Pybricks is Python coding for LEGO® Powered Up hubs. Run MicroPython scripts
-directly on the hub, and get full control of your motors and sensors. Pybricks
+on the hub, and get full control of your motors and sensors. Pybricks
 is free and open source.
 
 To use the nvim-pybricks plugin, you have to install the Pybricks firmware
 on your LEGO® hub. Go to the [Pybricks website](https://pybricks.com/) for
 more information.
 
-## Installation
+## Installation and configuration
 
 Install with your plugin manager just like any other lua plugin, for instance
-with `Packer`:
+with `LazyVim`:
 
 ```
-use 'kwsmit/nvim-pybricks.nvim'
-```
-
-## Setup
-
-There is one setting you need to add to the setup of the plugin, namely the
-name of the hub you use most often. For instance:
-
-```
-nvim_pybricks.setup({
+{ -- Pybricks programming
+  'kwsmit/nvim-pybricks.nvim',
+  init = function()
+    vim.keymap.set('n', '<leader>pr', require('nvim-pybricks').run_program, { desc = 'Run program on hub' })
+    vim.keymap.set('n', '<leader>ph', require('nvim-pybricks').set_hub_name, { desc = 'Set the name for the hub to use' })
+    vim.keymap.set('n', '<leader>pc', require('nvim-pybricks').set_connection_type, { desc = 'Set the type of connection to hub' })
     -- Define global name for hubname
-    vim.api.nvim_set_var('global_pybricks_hub_name', '<name of your hub>')
-})
+  end,
+  opts = {
+    hub_name = 'InventorHub',
+    connection_type = 'ble',
+  },
+},
 ```
 
-If you don't want to specify a global hubname, replace the second argument
-`'<name of your hub>'` by `nil` (without the quotes).
+To be able to upload programs to your LEGO hub, the plugin needs following
+information:
+
+- hub name. You set this hub name when installing the Pybricks firmware on
+your hub (see the Pybricks documentation).
+- connection type between your PC and hub. This can be either `usb` or
+`ble` (Bluetooth Low Energy).
+
+You can set both in the `opt` section of your plugin configuration,
+see the example above. Each time you start Neovim, these values will be used.
+
+During your session you can change both hub name and connection type, so it's
+easy to work with several different LEGO hubs. Be aware that these changed
+settings are not stored when closing Neovim, so when restarting Neovim the
+values are retreived form the plugin configuration.
+
+When no hub name or connection type is specified in your plugin configuration,
+the plugin asks you to enter these the first time you want to run a programm
+in your current programming session.
+
+If you like to use keyboard shortcuts to operate the plugin, you can define
+your keymappings in the `init` section like in the example above. You can
+set keymappings for:
+
+- upload and run the program in your current buffer.
+- set the name of the hub you want the programme run on.
+- set the connection type between your PC and the hub.
+
 
 ## Usage
 
 With this plugin you can write your Pybricks MicroPython code inside Neovim
-and upload and run it on your Pybricks hub. To upload and run your program
-Neovim must know the name of your hub. You set this name when installing the
-Pybricks firmware on your hub. If you use more hubs be sure to give every hub
-its own unique name.
-
-The plugin lets you define one global name for a hub. This hubname is saved
-during your programming session, it is lost when you close Neovim. But in the
-setup of the plugin you can declare a hubname which will be the global hubname
-when you start Neovim.
-
-It is possible to change the global hubname during your programming session
-and you can always overrule the global hubname, which makes it easy to work
-with several different hubs while programming and testing.
+and upload and run it on your Pybricks hub.
 
 ### User commands
 
-**PybricksRunFile <hubname\>**
+**PybricksRunProgram**
 
-- Upload the program to the given hub <hubname\> and run the program.
-- When <hubname\> is omitted, the program will be uploaded to and run on the
-hub with the current global hubname.
-- If the global hubname is not set, the plugin will ask the user for a hubname.
-When entered, this hubname becomes the new global hubname.
-- When <hubname\> is given the hub with this name will be used, no matter 
-what the global hubname is. The given hubname is only used this time, 
-the global hubname will not change.
+- Upload the program in your active buffer to the default hub and run the program.
+- If there's no default hub name set, the plugin will ask the user for it.
+When entered, this will become the new default hubname.
+- if there's no default connection type set, the plugin will ask for it.
+When entered, this will become the new default connection type.
 
 **PybricksSetHubName**
 
-- Use this command to set the global hubname.
+- Use this command to set a new value for the default hubname.
 
-### Keybindings
+**PybricksSetConnectionType**
 
-**<leader\>pr**
-
-- Upload the program to the hub with the global hubname and run the program.
-- You cannot specify a hubname, the plugin will use the global hubname. If the
-global hubname is not specified, the plugin will ask the user to enter a
-hubname. This hubname will become the new global hubname and thus will be
-used the next time this keybinding is used. If you want to use a different
-hubname, use command `PybricksSetHubName` to change the global hubname.
+- Use this command to set the default connection type to use. This can be either
+`usb` or `ble`.
 
 ## Tips
 
