@@ -19,11 +19,14 @@ end
 
 function M.set_connection_type()
 	-- Set connection type (usb or ble).
-	vim.ui.input({
-		prompt = "Enter connection type (usb or ble): ",
-	}, function(input)
-		if input then
-			global_opts.connection_type = input
+	vim.ui.select({ "ble", "usb" }, {
+		prompt = "Select how the hub is connected: ",
+		format_item = function(item)
+			return item
+		end,
+	}, function(connection_type, idx)
+		if connection_type then
+			global_opts.connection_type = connection_type
 		end
 	end)
 end
@@ -51,9 +54,14 @@ function M.run_program(hub_name)
 		M.set_connection_type()
 	end
 
-	-- Upload and run current program to hub.
+	-- Filename from current buffer.
 	local f = vim.fn.expand("%:p")
-	vim.cmd("! pybricksdev run " .. global_opts.connection_type .. " --name " .. hub .. " " .. f)
+	-- Pybricksdev command to upload and run program.
+	local pybricksdev = "pybricksdev run " .. global_opts.connection_type .. " --name " .. hub .. " " .. f
+	-- Toggleterm command to open terminal and run pybricksdev.
+	local termex_command = "TermExec cmd='" .. pybricksdev .. "'"
+	-- Open terminal and run command.
+	vim.cmd(termex_command)
 end
 
 return M
